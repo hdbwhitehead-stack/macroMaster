@@ -1,0 +1,47 @@
+Public Sub Remove_Hidden_Names()
+
+    ' Dimension variables.
+    Dim xName As Variant
+    Dim Result As Variant
+    Dim Vis As Variant
+
+    ' Loop once for each name in the workbook.
+    For Each xName In ActiveWorkbook.Names
+
+        'If a name is not visible (it is hidden)...
+        If xName.Visible = True Then
+        
+        Else
+            xName.Delete
+        End If
+    Next xName
+
+End Sub
+
+Public Sub ShowAllNames()
+    Dim nm As Name
+    For Each nm In ActiveWorkbook.Names
+        nm.Visible = True
+    Next nm
+End Sub
+
+Public Sub resetView()
+    Dim wb As Workbook
+    Dim ws As Worksheet
+    Dim origionalSheet As Worksheet
+    
+    Set wb = ActiveWorkbook
+    Set originalSheet = ActiveSheet
+    Application.ScreenUpdating = False
+    For Each ws In wb.Worksheets
+        ws.Activate
+        ActiveWindow.Zoom = 100
+        Range("A1").Select
+        ActiveWindow.ScrollRow = 1
+        ActiveWindow.ScrollColumn = 1
+    Next ws
+    
+    originalSheet.Activate
+    
+    Application.ScreenUpdating = True
+End Sub

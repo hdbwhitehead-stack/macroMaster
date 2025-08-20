@@ -1,0 +1,153 @@
+Public Sub styleReset(Optional showMsg As Boolean = True, Optional repairNormal As Boolean = False)
+    Dim wb As Workbook: Set wb = ActiveWorkbook
+    Dim used As Object: Set used = CreateObject("Scripting.Dictionary")
+    Dim ws As Worksheet, ur As Range, c As Range
+    Dim st As Style, deleted As Long
+    Dim targetFmt As String
+    Dim successSetNormal As Boolean
+
+    targetFmt = "#,##0.0_);(#,##0.0);0.0_);@_)"
+
+    With Application
+        .ScreenUpdating = False
+        .EnableEvents = False
+        .Calculation = xlCalculationManual
+        .DisplayAlerts = False
+    End With
+
+    On Error GoTo CleanFail
+
+    ' 1) Collect style names actually in use (scan UsedRange on each sheet)
+    For Each ws In wb.Worksheets
+        ' Skip empty sheets for speed
+        If Application.WorksheetFunction.CountA(ws.Cells) > 0 Then
+            Set ur = Nothing
+            On Error Resume Next
+            Set ur = ws.UsedRange
+            On Error GoTo 0
+            If Not ur Is Nothing Then
+                For Each c In ur.Cells
+                    If Not used.Exists(c.Style) Then used.Add c.Style, True
+                Next c
+            End If
+        End If
+    Next ws
+
+    ' 2) Delete styles that are not built-in and not used anywhere
+    For Each st In wb.Styles
+        If Not st.BuiltIn Then
+            If Not used.Exists(st.Name) And Not used.Exists(st.NameLocal) Then
+                On Error Resume Next
+                st.Delete
+                If Err.Number = 0 Then deleted = deleted + 1
+                Err.Clear
+                On Error GoTo 0
+            End If
+        End If
+    Next st
+
+    ' 3) Set the default (Normal) style number format (robust to renamed/corrupt state)
+    On Error Resume Next
+    wb.Styles("Normal").NumberFormat = targetFmt
+    successSetNormal = (Err.Number = 0)
+    Err.Clear
+    On Error GoTo 0
+
+    ' 3a) Optional repair path if Normal could not be set
+    If (Not successSetNormal) And repairNormal Then
+        successSetNormal = RepairNormalStyle(wb, targetFmt)
+    End If
+
+CleanExit:
+    With Application
+        .Calculation = xlCalculationAutomatic
+        .EnableEvents = True
+        .ScreenUpdating = True
+        .DisplayAlerts = True
+    End With
+
+    If showMsg Then
+        Dim msg As String
+        msg = deleted & " unused custom styles deleted." & vbCrLf & _
+              "Default 'Normal' style set to: " & targetFmt
+        If Not successSetNormal Then msg = msg & vbCrLf & _
+              "(Could not set 'Normal' style automatically; it may be renamed or corrupted.)"
+        MsgBox msg, vbInformation
+    End If
+    Exit Sub
+
+CleanFail:
+    ' Minimal cleanup then bubble up
+    With Application
+        .Calculation = xlCalculationAutomatic
+        .EnableEvents = True
+        .ScreenUpdating = True
+        .DisplayAlerts = True
+    End With
+    If showMsg Then MsgBox "styleReset encountered an error: " & Err.Description, vbExclamation
+End Sub
+
+
+Private Function RepairNormalStyle(wb As Workbook, ByVal targetFmt As String) As Boolean
+    ' Attempts to repair/reset the built-in Normal style by copying from a fresh workbook
+    Dim tempWb As Workbook
+    Dim ok As Boolean
+
+    On Error GoTo Fail
+
+    Set tempWb = Workbooks.Add(xlWBATWorksheet) 'new clean workbook
+
+    ' Ensure destination has a Normal style entry
+    Dim destNormal As Style
+    On Error Resume Next
+    Set destNormal = wb.Styles("Normal")
+    On Error GoTo 0
+
+    If destNormal Is Nothing Then
+        ' Shouldn't happen for built-in styles, but guard anyway
+        Set destNormal = wb.Styles.Add("Normal")
+    End If
+
+    ' Copy core formatting from clean Normal
+    With destNormal
+        .IncludeNumber = True
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = True
+        .IncludePatterns = True
+        .IncludeProtection = True
+
+        ' Transfer properties
+        .NumberFormat = tempWb.Styles("Normal").NumberFormat
+        .Font.Name = tempWb.Styles("Normal").Font.Name
+        .Font.Size = tempWb.Styles("Normal").Font.Size
+        .Font.Bold = tempWb.Styles("Normal").Font.Bold
+        .Font.Italic = tempWb.Styles("Normal").Font.Italic
+        .Font.Underline = tempWb.Styles("Normal").Font.Underline
+        .Font.Color = tempWb.Styles("Normal").Font.Color
+        .HorizontalAlignment = tempWb.Styles("Normal").HorizontalAlignment
+        .VerticalAlignment = tempWb.Styles("Normal").VerticalAlignment
+        .WrapText = tempWb.Styles("Normal").WrapText
+        .Orientation = tempWb.Styles("Normal").Orientation
+        .ShrinkToFit = tempWb.Styles("Normal").ShrinkToFit
+        .ReadingOrder = tempWb.Styles("Normal").ReadingOrder
+        .Locked = tempWb.Styles("Normal").Locked
+        .FormulaHidden = tempWb.Styles("Normal").FormulaHidden
+    End With
+
+    ' Now set requested number format
+    wb.Styles("Normal").NumberFormat = targetFmt
+
+    ok = True
+
+Cleanup:
+    On Error Resume Next
+    If Not tempWb Is Nothing Then tempWb.Close SaveChanges:=False
+    On Error GoTo 0
+    RepairNormalStyle = ok
+    Exit Function
+
+Fail:
+    ok = False
+    Resume Cleanup
+End Function

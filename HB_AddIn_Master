@@ -1,0 +1,100 @@
+Option Explicit
+
+Const BLUE_OFFSET = 65536
+Const GREEN_OFFSET = 256
+Const RED_OFFSET = 1
+
+Public Const cWhite As Long = (255! * RED_OFFSET) + (255! * GREEN_OFFSET) + (255! * BLUE_OFFSET) 'banner 1 & 2 FONT
+Public Const CLinkedCell As Long = (0! * RED_OFFSET) + (128! * GREEN_OFFSET) + (0! * BLUE_OFFSET) 'linked Cell
+
+Public Const cInputBG As Long = (255! * RED_OFFSET) + (255! * GREEN_OFFSET) + (235! * BLUE_OFFSET) 'input cell BG Yellow
+Public Const cBlankCell As Long = (242! * RED_OFFSET) + (242! * GREEN_OFFSET) + (242! * BLUE_OFFSET)
+Public Const cInputFont As Long = (0! * RED_OFFSET) + (0! * GREEN_OFFSET) + (255! * BLUE_OFFSET) 'Input Cell Font
+
+Public Const cBlack As Long = (51! * RED_OFFSET) + (51! * GREEN_OFFSET) + (51! * BLUE_OFFSET)  'Mineshaft
+Public Const cTitle As Long = (15! * RED_OFFSET) + (22! * GREEN_OFFSET) + (50! * BLUE_OFFSET)
+Public Const cBanner1 As Long = (15! * RED_OFFSET) + (22! * GREEN_OFFSET) + (50! * BLUE_OFFSET)
+Public Const cBanner2 As Long = (0! * RED_OFFSET) + (51! * GREEN_OFFSET) + (102! * BLUE_OFFSET)
+Public Const cBanner3 As Long = (36! * RED_OFFSET) + (91! * GREEN_OFFSET) + (226! * BLUE_OFFSET) 'FC Light Blue
+Public Const cBanner4 As Long = (219! * RED_OFFSET) + (221! * GREEN_OFFSET) + (243! * BLUE_OFFSET) 'FS Light Grey
+Public Const cBanner5 As Long = (226! * RED_OFFSET) + (226! * GREEN_OFFSET) + (226! * BLUE_OFFSET)
+Public Const cHeader As Long = cBlack
+Public Const FontSize As Double = 8
+Public Const DecimalPoints As Double = 1
+Public Const FontType As Variant = "Aptos"
+
+Public Const cWorking As Long = (230! * RED_OFFSET) + (235! * GREEN_OFFSET) + (246! * BLUE_OFFSET) 'Harsh Background working
+Public Const cBorder As Long = (226! * RED_OFFSET) + (226! * GREEN_OFFSET) + (226! * BLUE_OFFSET) 'Harsh Background working
+
+Public Const cWIP As Long = (234! * RED_OFFSET) + (205! * GREEN_OFFSET) + (86! * BLUE_OFFSET) 'FL Info Orange
+Public Const cNames As Long = (192! * RED_OFFSET) + (0! * GREEN_OFFSET) + (0! * BLUE_OFFSET) 'FL Red
+Public Const cDefault As Long = (83! * RED_OFFSET) + (86! * GREEN_OFFSET) + (90! * BLUE_OFFSET) 'Citi Black Font
+
+Sub StyleChange()
+Dim Ans As String
+
+Ans = MsgBox("Do you want to Delete all styles?", vbYesNo)
+If Ans = vbYes Then
+    StyleKill
+Else
+    Ans = MsgBox("Do you want to Delete all un-used existing styles?", vbYesNo)
+    If Ans = vbYes Then RemoveUnusedStyles
+End If
+
+Ans = MsgBox("Do you want to copy/merger all the new styles?", vbYesNo)
+If Ans = vbYes Then
+   ApplyStyle
+ End If
+
+End Sub
+
+Sub StyleKill()
+Dim counter As Integer
+If ActiveWorkbook.Styles.count = 2 Then Exit Sub
+For counter = 1 To ActiveWorkbook.Styles.count
+    If ActiveWorkbook.Styles.count = 2 Then Exit Sub
+    If ActiveWorkbook.Styles(1) = ActiveWorkbook.Styles("Normal") Or ActiveWorkbook.Styles(1) = ActiveWorkbook.Styles("Percent") Then
+        If ActiveWorkbook.Styles(2) = ActiveWorkbook.Styles("Percent") Then
+            ActiveWorkbook.Styles(3).Delete
+        Else
+            ActiveWorkbook.Styles(2).Delete
+        End If
+    Else
+        ActiveWorkbook.Styles(1).Delete
+    End If
+Next
+End Sub
+
+Sub RemoveUnusedStyles()
+    Dim rg As Range, C As Range
+    Dim sts As Styles, st As Style
+    Dim collStyles As Collection
+    Dim wb As Workbook, ws As Worksheet
+    Dim vSts() As String
+    Dim i As Long
+Set wb = ActiveWorkbook
+Set collStyles = New Collection
+
+'Get list of used styles
+On Error Resume Next
+For Each ws In wb.Worksheets
+    Set rg = ws.UsedRange
+    For Each C In rg
+        collStyles.Add Item:=C.Style, Key:=CStr(C.Style)
+    Next C
+Next ws
+On Error GoTo 0
+
+'Delete unused styles
+Set sts = ActiveWorkbook.Styles
+For Each st In sts
+    On Error GoTo DeleteStyle
+        Debug.Print collStyles.Item(st.Name)
+    On Error GoTo 0
+Next st
+Exit Sub
+
+DeleteStyle:
+    st.Delete
+    Resume Next
+End Sub

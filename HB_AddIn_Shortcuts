@@ -1,0 +1,573 @@
+Option Explicit
+Sub ShowChooseColorForm()
+    ChooseColor.Show
+End Sub
+
+Sub StyleInput()
+    Selection.Style = "Input"
+End Sub
+
+Sub StylePercentage()
+
+On Error Resume Next
+
+If Selection.NumberFormat = "0.00%_);(0.00%);--\%_)" Then
+        Selection.Style = "Percent1"
+            ElseIf Selection.NumberFormat = "0.0%_);(0.0%);--\%_)" Then
+            Selection.Style = "Percent0"
+    Else
+    Selection.Style = "Percent"
+End If
+
+End Sub
+
+
+Sub StyleMultiple()
+
+On Error Resume Next
+
+If Selection.NumberFormat = "0.0x_);(0.0x);0.0x_)" Then
+        Selection.Style = "Multiple2"
+    Else
+    Selection.Style = "Multiple1"
+End If
+End Sub
+
+Sub StyleLink()
+    
+    On Error Resume Next
+
+If Selection.Font.Color = CLinkedCell Then
+        Selection.Style = "names"
+        ElseIf Selection.Font.Color = cNames Then
+            Selection.Font.Color = cExternalLinks
+            Selection.Font.Italic = True
+            Selection.Font.Underline = False
+    Else
+    Selection.Style = "Linked Cell"
+End If
+    
+    
+End Sub
+
+Sub StyleDate()
+
+On Error Resume Next
+
+If Selection.NumberFormat = "dd-mmm yy;""nm "";""nm """ Then
+        Selection.Style = "Date2"
+            ElseIf Selection.NumberFormat = "mmm-yy;""nm "";""nm """ Then
+            Selection.Style = "Date3"
+    Else
+    Selection.Style = "Date1"
+End If
+
+End Sub
+
+Sub StyleBanner()
+    On Error Resume Next
+    Dim currentColor As Long
+    currentColor = Selection.Interior.Color
+
+    Select Case True
+        Case currentColor = cBanner1
+            Selection.Style = "Banner2"
+        Case currentColor = cBanner2
+            Selection.Style = "Banner3"
+        Case currentColor = cBanner3
+            Selection.Style = "Banner4"
+        Case currentColor = cBanner4
+            Selection.Style = "Banner5"
+        Case Else
+            Selection.Style = "Banner1"
+    End Select
+End Sub
+
+
+Sub StyleTotal()
+    
+On Error Resume Next
+
+If Selection.Borders(xlBottom).LineStyle = xlContinuous Then
+        Selection.Style = "SubTotal"
+    Else
+     Selection.Style = "Total"
+End If
+    
+End Sub
+
+
+Sub StyleHeader()
+
+On Error Resume Next
+
+If Selection.HorizontalAlignment = xlLeft Then
+        Selection.Style = "HeadingC"
+            ElseIf Selection.HorizontalAlignment = xlCenter Then
+            Selection.HorizontalAlignment = xlCenterAcrossSelection
+            ElseIf Selection.HorizontalAlignment = xlCenterAcrossSelection Then
+            Selection.Style = "HeadingR"
+    Else
+     Selection.Style = "HeadingL"
+End If
+
+End Sub
+
+Sub StyleNormal()
+    Selection.Style = "Normal"
+End Sub
+
+Sub StyleCounter()
+
+On Error Resume Next
+
+If Selection.NumberFormat = "#,##0.00_);(#,##0.00);--_)" Then
+        Selection.Style = "Comma [1]"
+            ElseIf Selection.NumberFormat = "#,##0.0_);(#,##0.0);--_)" Then
+            Selection.Style = "Comma [0]"
+            ElseIf Selection.NumberFormat = "#,##0_);(#,##0);--_)" Then
+            Selection.Style = "Counter"
+            
+    Else
+     Selection.Style = "Comma"
+End If
+
+End Sub
+
+Sub FindandTurnInputsBlue()
+
+Dim wsSheet As Worksheet
+Dim InputRange As Range
+Dim FormulaRange As Range
+Dim rngCell As Range
+
+For Each wsSheet In ActiveWorkbook.Worksheets
+
+    With wsSheet
+        On Error Resume Next
+        
+        Set InputRange = .Cells.SpecialCells(xlCellTypeConstants, xlNumbers)
+        InputRange.Cells.Style = "Input"
+        
+        Set FormulaRange = .Cells.SpecialCells(xlCellTypeFormulas, xlNumbers)
+            For Each rngCell In FormulaRange.Cells
+                With rngCell
+                    If InStr(.formula, "!") Then .Style = "Linked Cell"
+                    If InStr(.formula, "]") Then .Style = "Names"
+                End With
+            Next rngCell
+        
+    End With
+Next wsSheet
+
+End Sub
+
+Sub TraceDependents()
+On Error Resume Next
+Selection.ShowDependents
+End Sub
+
+Sub TracePrecedents()
+    On Error Resume Next
+    Selection.ShowPrecedents
+End Sub
+Sub RemoveArrows()
+    On Error Resume Next
+    ActiveSheet.ClearArrows
+End Sub
+
+Sub AEToggle()
+    
+On Error Resume Next
+
+If Selection.NumberFormat = "General""A""" Then
+        Selection.NumberFormat = "General""E"""
+            ElseIf Selection.NumberFormat = "General""E""" Then
+            Selection.NumberFormat = "yyyy\A"
+            ElseIf Selection.NumberFormat = "yyyy\A" Then
+            Selection.NumberFormat = "yyyy\E"
+    Else
+     Selection.NumberFormat = "General""A"""
+End If
+
+End Sub
+
+Sub StyleDeviant()
+On Error Resume Next
+    Selection.Style = "Deviant"
+End Sub
+
+Sub StyleBlank()
+On Error Resume Next
+    Selection.Style = "Blank"
+End Sub
+
+Sub ColumnWidth()
+On Error Resume Next
+
+If Round(Selection.ColumnWidth, 1) = 0.5 Then
+        Selection.ColumnWidth = 1
+        ElseIf Round(Selection.ColumnWidth, 1) = 1 Then
+        Selection.ColumnWidth = 2
+        ElseIf Round(Selection.ColumnWidth, 1) = 2 Then
+        Selection.ColumnWidth = 8.5
+        ElseIf Round(Selection.ColumnWidth, 1) = 8.5 Then
+        Selection.ColumnWidth = 25
+    Else
+        Selection.ColumnWidth = 0.5
+End If
+
+End Sub
+Sub RowHeight()
+On Error Resume Next
+
+If Round(Selection.RowHeight, 1) = 3 Then
+        Selection.RowHeight = 10.5
+        ElseIf Round(Selection.RowHeight, 1) = 10.5 Then
+        Selection.RowHeight = 12.9
+        ElseIf Round(Selection.RowHeight, 1) = 12.9 Then
+        Selection.RowHeight = 15.6
+        'ElseIf Round(Selection.ColumnWidth, 1) = 15.6 Then
+        'Selection.ColumnWidth = 25
+    Else
+        Selection.RowHeight = 3
+End If
+
+End Sub
+
+Sub StyleWIP()
+On Error Resume Next
+    Selection.Style = "WIP"
+End Sub
+
+Sub IfErrorToggle()
+    Dim InsertFormula As String
+    Dim ExistingFormula As String
+    Dim Filler1 As String
+    Dim Filler2 As String
+    Dim FormulaStart As String
+    Dim CombinedFormula As String
+    
+    On Error Resume Next
+    Filler1 = """NA"""
+    Filler2 = """"""
+    FormulaStart = "=IFERROR("
+    
+    Application.ScreenUpdating = False
+    'if formula and not already iferror
+    If Left(Selection.formula, 1) = "=" And Left(Selection.formula, Len(FormulaStart)) <> FormulaStart Then
+        InsertFormula = ActiveCell.formula
+        InsertFormula = Right(InsertFormula, Len(InsertFormula) - 1)
+        CombinedFormula = FormulaStart & InsertFormula & "," & Filler1 & ")"
+        ActiveCell.formula = CombinedFormula
+        Selection.HorizontalAlignment = xlRight
+    'if iferror and Filler1
+    ElseIf Left(Selection.formula, Len(FormulaStart)) = FormulaStart And InStr(Selection.formula, Filler1) <> 0 Then
+        ExistingFormula = ActiveCell.formula
+        ExistingFormula = Replace(ExistingFormula, Filler1, Filler2)
+        ActiveCell.formula = ExistingFormula
+        Selection.HorizontalAlignment = xlRight
+    'if iferror and Filler2, back to original formula
+    ElseIf Left(Selection.formula, Len(FormulaStart)) = FormulaStart And InStr(Selection.formula, Filler2) <> 0 Then
+        ExistingFormula = ActiveCell.formula
+        
+        ExistingFormula = Left(ExistingFormula, InStr(ExistingFormula, Filler2) - 2)
+        ExistingFormula = Right(ExistingFormula, Len(ExistingFormula) - Len(FormulaStart))
+        ActiveCell.formula = "=" & ExistingFormula
+        
+        Selection.HorizontalAlignment = xlRight
+    End If
+    Application.ScreenUpdating = True
+End Sub
+
+Sub numbergenerator()
+
+Dim cnt As Double
+Dim loopcounter As Double
+Application.ScreenUpdating = False
+
+cnt = Selection.count
+For loopcounter = 1 To cnt
+Selection.Cells(loopcounter) = Int((500 - 100 + 1) * Rnd + 100)
+Selection.Cells(loopcounter).Style = "Input"
+Next
+
+Application.ScreenUpdating = True
+End Sub
+
+
+Sub IncomeStatementGenerator()
+
+    ActiveCell.Offset(0, 0) = "Revenues"
+    ActiveCell.Offset(0, 1) = 1000
+    ActiveCell.Offset(0, 1).Style = "Input"
+    ActiveCell.Offset(1, 0) = "COGS"
+    ActiveCell.Offset(1, 1) = -300
+    ActiveCell.Offset(1, 1).Style = "Input"
+    ActiveCell.Offset(2, 0) = "Gross Profit"
+    ActiveCell.Offset(2, 1).FormulaR1C1 = "=SUM(R[-2]C:R[-1]C)"
+    ActiveCell.Offset(2, 1).Style = "subtotal"
+    ActiveCell.Offset(3, 0) = "SG&A"
+    ActiveCell.Offset(3, 1) = -200
+    ActiveCell.Offset(3, 1).Style = "Input"
+    ActiveCell.Offset(4, 0) = "EBIT"
+    ActiveCell.Offset(4, 1).FormulaR1C1 = "=SUM(R[-2]C:R[-1]C)"
+    ActiveCell.Offset(4, 1).Style = "subtotal"
+    ActiveCell.Offset(5, 0) = "Int Expense"
+    ActiveCell.Offset(5, 1) = -100
+    ActiveCell.Offset(5, 1).Style = "Input"
+    ActiveCell.Offset(6, 0) = "Int Income"
+    ActiveCell.Offset(6, 1) = 0
+    ActiveCell.Offset(6, 1).Style = "Input"
+    ActiveCell.Offset(7, 0) = "PBT"
+    ActiveCell.Offset(7, 1).FormulaR1C1 = "=SUM(R[-3]C:R[-1]C)"
+    ActiveCell.Offset(7, 1).Style = "subtotal"
+    ActiveCell.Offset(8, 0) = "Taxes"
+    ActiveCell.Offset(8, 1).FormulaR1C1 = "=R[-1]C*20%*-1"
+    ActiveCell.Offset(9, 0) = "Net Inc"
+    ActiveCell.Offset(9, 1).FormulaR1C1 = "=SUM(R[-2]C:R[-1]C)"
+    ActiveCell.Offset(9, 1).Style = "Total"
+
+End Sub
+
+
+Sub ZoomAll()
+ 
+Dim ws As Worksheet
+Dim OriginalZoom As Integer
+Dim actcell As Range
+
+Set actcell = ActiveCell
+
+Application.ScreenUpdating = False
+ 
+OriginalZoom = ActiveWindow.Zoom
+
+For Each ws In ActiveWorkbook.Worksheets
+    ws.Activate
+    ActiveWindow.Zoom = OriginalZoom
+    ActiveWindow.ScrollRow = 1
+    ActiveWindow.ScrollColumn = 1
+    Range("A2").Select
+Next
+ 
+Application.GoTo actcell
+Application.ScreenUpdating = True
+ 
+
+End Sub
+
+Sub SaveNewVersion()
+    Dim fileName As String, index As Long, ext As String, arr() As String
+       
+            arr = Split(ActiveWorkbook.Name, ".")
+        ext = UBound(arr)
+    
+    
+    If InStr(ActiveWorkbook.Name, " v") = 0 Then
+        
+        fileName = ActiveWorkbook.Path & "/" & Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, ".") - 1) & " v1." & arr(ext)
+        ActiveWorkbook.SaveAs (fileName)
+    Else
+        index = CInt(Split(Right(ActiveWorkbook.Name, Len(ActiveWorkbook.Name) - InStr(ActiveWorkbook.Name, " v") - 1), ".")(0))
+        index = index + 1
+        fileName = ActiveWorkbook.Path & "/" & Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, " v") - 1) & " v" & index & "." & arr(ext)
+    End If
+    ActiveWorkbook.SaveAs (fileName)
+End Sub
+
+Sub Divide_a_range_of_cells_by_hundred()
+Dim rng As Range
+Dim myVal As Range
+Set rng = Selection
+On Error Resume Next
+For Each myVal In rng
+myVal = myVal.Value / 100
+Next myVal
+
+End Sub
+Sub Multiply_a_range_of_cells_by_hundred()
+Dim rng As Range
+Dim myVal As Range
+Set rng = Selection
+On Error Resume Next
+For Each myVal In rng
+myVal = myVal.Value * 100
+Next myVal
+
+End Sub
+
+Sub Divide_a_range_of_cells_by_thousand()
+Dim rng As Range
+Dim myVal As Range
+Set rng = Selection
+On Error Resume Next
+For Each myVal In rng
+myVal = myVal.Value / 1000
+Next myVal
+
+End Sub
+Sub Multiply_a_range_of_cells_by_thousand()
+Dim rng As Range
+Dim myVal As Range
+On Error Resume Next
+Set rng = Selection
+For Each myVal In rng
+myVal = myVal.Value * 1000
+Next myVal
+
+End Sub
+Sub ToggleMultiplyByMinus1()
+    Dim cell As Range
+    Dim f As String
+    Dim isFormula As Boolean
+    Dim wrappedFormulaPattern As String
+
+    Application.ScreenUpdating = False
+    Application.EnableEvents = False
+
+    wrappedFormulaPattern = ")*-1" ' Look for this to identify already wrapped formulas
+
+    For Each cell In Selection
+        If cell.HasFormula Then
+            f = cell.formula
+
+            ' If already wrapped with (*-1), unwrap it
+            If Right(f, 4) = ")*-1" And Left(f, 1) = "=" Then
+                ' Remove "(*" at the start and ")*-1" at the end
+                f = Mid(f, 3, Len(f) - 6) ' Remove ="(" and ")*-1"
+                cell.formula = "=" & f
+            Else
+                ' Wrap formula in brackets and multiply by -1
+                f = Mid(f, 2) ' Remove leading "="
+                cell.formula = "=(" & f & ")*-1"
+            End If
+
+        ElseIf IsNumeric(cell.Value) And Not IsEmpty(cell.Value) Then
+            ' Hardcoded number: just multiply
+            cell.Value = cell.Value * -1
+        End If
+    Next cell
+
+    Application.EnableEvents = True
+    Application.ScreenUpdating = True
+End Sub
+Sub toggletabs()
+Application.CommandBars("Workbook Tabs").ShowPopup
+End Sub
+
+Sub RoundToDecimals()
+    Dim selectedRange As Range
+    Dim cell As Range
+    Dim decimals As Variant
+
+    ' Ask the user for the number of decimals
+    decimals = InputBox("Enter the number of decimal places:", "Round Numbers", 2)
+
+    ' Check if the input is numeric and greater than or equal to 0
+    If IsNumeric(decimals) And decimals >= 0 Then
+        Set selectedRange = Selection
+
+        ' Loop through each cell in the selected range
+        For Each cell In selectedRange
+            ' Check if the cell contains a numeric value
+            If IsNumeric(cell.Value) Then
+                ' Round the cell value to the specified number of decimals
+                cell.Value = Application.WorksheetFunction.Round(cell.Value, CInt(decimals))
+            End If
+        Next cell
+    Else
+        MsgBox "Please enter a valid number of decimal places.", vbExclamation, "Invalid Input"
+    End If
+End Sub
+Sub Gridlines()
+
+Dim ws As Worksheet
+Dim actcell As Range
+Dim onoff As Variant
+
+If ActiveWindow.DisplayGridlines = True Then onoff = False
+If ActiveWindow.DisplayGridlines = False Then onoff = True
+
+
+Set actcell = ActiveCell
+
+For Each ws In ActiveWorkbook.Worksheets
+    ws.Activate
+        ActiveWindow.DisplayGridlines = onoff
+Next ws
+
+Application.GoTo actcell
+
+End Sub
+Sub TextWrap()
+   
+On Error Resume Next
+If Selection.WrapText = True Then
+        Selection.WrapText = False
+    Else
+     Selection.WrapText = True
+End If
+
+End Sub
+Sub GetAllComments_HB()
+    Dim ws As Worksheet
+    Dim cmnt As Comment
+    Dim commentsSheet As Worksheet
+    Dim count As Long
+
+    ' Check if "CommentsHB" sheet exists and clear it
+    On Error Resume Next
+    Set commentsSheet = ActiveWorkbook.Worksheets("CommentsHB")
+    On Error GoTo 0
+
+    If Not commentsSheet Is Nothing Then
+        commentsSheet.Cells.Clear
+    Else
+        Set commentsSheet = Sheets.Add(After:=Sheets(1))
+        commentsSheet.Name = "CommentsHB"
+    End If
+
+    ' Set up the "CommentsHB" sheet
+    With commentsSheet
+        .Activate
+        .Range("A1:C1").Value = Array("Link", "Author", "Comments")
+        .Range("A1:C1").Font.Bold = True
+        .Range("A1:C1").Borders(xlEdgeBottom).LineStyle = xlContinuous
+        .Range("A1:C1").Borders(xlEdgeBottom).Weight = xlThin
+        .Columns("A:C").VerticalAlignment = xlCenter
+        ActiveWindow.DisplayGridlines = False
+    End With
+
+    ' Record comments
+    count = 1
+
+    For Each ws In ActiveWorkbook.Worksheets
+        For Each cmnt In ws.Comments
+            With commentsSheet
+                .Hyperlinks.Add Anchor:=.Range("A" & count + 1), Address:="", _
+                                SubAddress:="'" & ws.Name & "'!" & cmnt.Parent.Address, _
+                                TextToDisplay:="'" & ws.Name & "'!" & cmnt.Parent.Address
+                .Range("B" & count + 1).Value = cmnt.Author
+                .Range("C" & count + 1).Value = Mid(cmnt.Text, InStr(cmnt.Text, ":") + 2, 100000)
+            End With
+            count = count + 1
+        Next cmnt
+    Next ws
+
+    ' Final formatting for "CommentsHB" sheet
+    With commentsSheet
+        .UsedRange.EntireColumn.AutoFit
+        .Range("A1").ColumnWidth = .Range("A1").ColumnWidth + 2
+        .Range("B1").ColumnWidth = .Range("B1").ColumnWidth + 2
+        .Columns("C:C").ColumnWidth = 120
+        .Columns("C:C").WrapText = True
+        .UsedRange.EntireRow.AutoFit
+        .PageSetup.Orientation = xlLandscape
+        .PageSetup.Zoom = False
+        .PageSetup.FitToPagesTall = 1
+        .PageSetup.FitToPagesWide = 1
+        .Columns("D:XFD").hidden = True
+        .Range("A1").Select
+    End With
+End Sub

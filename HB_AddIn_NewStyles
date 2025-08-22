@@ -1,0 +1,920 @@
+Option Explicit
+Sub ApplyStyle()
+    Percent
+    Normal
+    Percent0
+    Percent1
+    Comma
+    Comma1
+    Comma0
+    multiple1
+    multiple2
+    subtotal
+    total
+    date1
+    date2
+    date3
+    counter
+    bps
+    banner1
+    banner2
+    banner3
+    banner4
+    banner5
+    Input1
+    LinkedCell
+    Names1
+    Title1
+    SubTitle1
+    headingL
+    headingC
+    HeadingR
+    hidden
+    blank
+    deviant
+    WIPReview
+    Workings
+End Sub
+
+Sub ApplyBaseStyle(ByRef targetStyle As Style)
+    With targetStyle
+        ' Include all categories by default
+        .IncludeFont = False
+        .IncludeNumber = True
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = True
+        .IncludePatterns = True
+        .IncludeProtection = True
+    End With
+
+    ' === Number Format ===
+    Select Case DecimalPoints
+        Case 0
+            targetStyle.NumberFormat = "#,##0_);(#,##0);--_)"
+        Case 2
+            targetStyle.NumberFormat = "#,##0.00_);(#,##0.00);--_)"
+        Case Else
+            targetStyle.NumberFormat = "#,##0.0_);(#,##0.0);--_)"
+    End Select
+
+    ' === Alignment ===
+    With targetStyle
+        .HorizontalAlignment = xlGeneral
+        .VerticalAlignment = xlBottom
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        '.MergeCells = False
+    End With
+
+'    targetStyle.Font.Name = "Arial" ' Temporary reset
+
+    ' === Font ===
+    With targetStyle.Font
+        .Name = CStr(FontType)
+        .Bold = False
+        .Italic = False
+        .Size = FontSize
+        .Strikethrough = False
+        .Superscript = False
+        .Subscript = False
+        .OutlineFont = False
+        .Shadow = False
+        .Underline = xlUnderlineStyleNone
+        .Color = cBlack
+        .TintAndShade = 0
+        .ThemeFont = xlThemeFontNone
+    End With
+
+    ' === Fill ===
+    With targetStyle.Interior
+        .Pattern = xlNone
+        .PatternColorIndex = xlAutomatic
+        .Color = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+
+    ' === Protection ===
+    targetStyle.Locked = False
+    targetStyle.FormulaHidden = False
+
+
+    ' === Borders ===
+    With targetStyle.Borders
+        .Color = cDefault
+        .TintAndShade = 0
+        .Weight = xlThin
+        .Item(xlDiagonalDown).LineStyle = xlNone
+        .Item(xlDiagonalUp).LineStyle = xlNone
+        .Item(xlLeft).LineStyle = xlNone
+        .Item(xlTop).LineStyle = xlNone
+        .Item(xlBottom).LineStyle = xlNone
+        .Item(xlRight).LineStyle = xlNone
+        .Item(xlInsideVertical).LineStyle = xlNone
+        .Item(xlInsideHorizontal).LineStyle = xlNone
+    End With
+    'Debug.Print "Applied to: " & targetStyle.Name & " | Font: " & targetStyle.Font.Name & " | Size: " & targetStyle.Font.Size
+
+End Sub
+
+
+Sub Normal()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Normal"
+    
+    ' Apply base formatting
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Normal"))
+End Sub
+
+Sub Percent()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Percent"
+
+    ' Apply base style first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Percent"))
+
+    ' Then explicitly turn off unused components
+    With ActiveWorkbook.Styles("Percent")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "0.00%_);(0.00%);--\%_)"
+    End With
+End Sub
+
+Sub Percent0()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Percent0"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Percent0"))
+
+    ' Deactivate unused elements and apply custom format
+    With ActiveWorkbook.Styles("Percent0")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "0%_);(0%);--\%_)"
+    End With
+End Sub
+
+Sub Percent1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Percent1"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Percent1"))
+
+    ' Deactivate unused elements and apply custom format
+    With ActiveWorkbook.Styles("Percent1")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "0.0%_);(0.0%);--\%_)"
+    End With
+End Sub
+
+Sub Comma()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Comma"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Comma"))
+
+    ' Deactivate unused elements and apply custom number format
+    With ActiveWorkbook.Styles("Comma")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "#,##0.00_);(#,##0.00);--_)"
+    End With
+End Sub
+
+Sub Comma0()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Comma [0]"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Comma [0]"))
+
+    ' Deactivate unused elements and apply custom number format
+    With ActiveWorkbook.Styles("Comma [0]")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "#,##0_);(#,##0);--_)"
+    End With
+End Sub
+
+Sub Comma1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Comma [1]"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Comma [1]"))
+
+    ' Deactivate unused elements and apply custom number format
+    With ActiveWorkbook.Styles("Comma [1]")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "#,##0.0_);(#,##0.0);--_)"
+    End With
+End Sub
+
+
+Sub multiple1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="multiple1"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("multiple1"))
+
+    ' Deactivate unused elements and set custom number format
+    With ActiveWorkbook.Styles("multiple1")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "0.0x_);(0.0x);0.0x_)"
+    End With
+End Sub
+Sub multiple2()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="multiple2"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("multiple2"))
+
+    ' Deactivate unused elements and set custom number format
+    With ActiveWorkbook.Styles("multiple2")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "0.00x_);(0.00x);0.00x_)"
+    End With
+End Sub
+
+Sub counter()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="counter"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("counter"))
+
+    ' Deactivate unused elements and set custom number format
+    With ActiveWorkbook.Styles("counter")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "0_);(0);--_)"
+    End With
+End Sub
+
+Sub date1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="date1"
+
+    ' Apply baseline formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("date1"))
+
+    ' Deactivate unused properties and apply custom number format
+    With ActiveWorkbook.Styles("date1")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "dd-mmm yy;""nm "";""nm """
+    End With
+End Sub
+Sub date2()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="date2"
+
+    ' Apply baseline formatting
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("date2"))
+
+    ' Deactivate unneeded components and set format
+    With ActiveWorkbook.Styles("date2")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "mmm-yy;""nm "";""nm """
+    End With
+End Sub
+
+Sub date3()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="date3"
+
+    ' Apply baseline formatting
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("date3"))
+
+    ' Deactivate unneeded components and set format
+    With ActiveWorkbook.Styles("date3")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "yyyy;""nm "";""nm """
+    End With
+End Sub
+Sub hidden()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="hidden"
+
+    ' Apply baseline formatting
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("hidden"))
+
+    ' Deactivate unused components and set hidden number format
+    With ActiveWorkbook.Styles("hidden")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = ";;;" ' hides content
+    End With
+End Sub
+
+Sub bps()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="bps"
+
+    ' Apply baseline formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("bps"))
+
+    ' Deactivate unneeded attributes and set custom number format
+    With ActiveWorkbook.Styles("bps")
+        .IncludeNumber = True
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+        .NumberFormat = "#,##0 ""bps""_);(#,##0 ""bps"");-- ""bps""_)"
+    End With
+End Sub
+
+Sub subtotal()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="subtotal"
+
+    ' Apply base formatting identical to "Normal"
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("subtotal"))
+
+    ' Turn off unneeded categories
+    With ActiveWorkbook.Styles("subtotal")
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = False
+        .IncludeBorder = True
+        .IncludePatterns = False
+        .IncludeProtection = False
+    End With
+
+    ' Apply style-specific changes
+    With ActiveWorkbook.Styles("subtotal")
+        .Font.Bold = True
+        .Borders(xlTop).LineStyle = xlContinuous
+    End With
+End Sub
+
+Sub total()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="total"
+
+    ' Apply base Normal format
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("total"))
+
+    With ActiveWorkbook.Styles("total")
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = False
+        .IncludeBorder = True
+        .IncludePatterns = False
+        .IncludeProtection = False
+
+        ' Only modified settings
+        .Font.Bold = True
+        .Borders(xlTop).LineStyle = xlContinuous
+        .Borders(xlBottom).LineStyle = xlContinuous
+    End With
+End Sub
+
+Sub Input1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Input"
+
+    ' Apply base Normal format
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Input"))
+
+    With ActiveWorkbook.Styles("Input")
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = False
+        .IncludeBorder = False
+         .IncludePatterns = False '(Make this true for fill yellow)
+         .IncludeProtection = False
+
+        ' Incremental changes only
+        .Font.Color = cInputFont
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cInputBG
+    End With
+End Sub
+
+Sub LinkedCell()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Linked Cell"
+
+    ' Apply base Normal format first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Linked Cell"))
+
+    With ActiveWorkbook.Styles("Linked Cell")
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+
+        ' Incremental change only
+        .Font.Color = CLinkedCell
+    End With
+End Sub
+
+Sub Names1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Names"
+
+    ' Apply base Normal format first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Names"))
+
+    With ActiveWorkbook.Styles("Names")
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+
+        ' Override only the necessary attribute
+        .Font.Color = cNames
+    End With
+End Sub
+
+Sub Title1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Title"
+
+    ' Apply base Normal formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Title"))
+
+    With ActiveWorkbook.Styles("Title")
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+
+        ' Alignment changes
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlCenter
+
+        ' Font overrides
+        .Font.Bold = True
+        .Font.Size = FontSize + 4
+        .Font.Color = cTitle
+    End With
+End Sub
+Sub SubTitle1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="SubTitle"
+
+    ' Apply base Normal formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("SubTitle"))
+
+    With ActiveWorkbook.Styles("SubTitle")
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = False
+        .IncludePatterns = False
+        .IncludeProtection = False
+
+        ' Alignment overrides
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlCenter
+
+        ' Font overrides
+        .Font.Bold = True
+        .Font.Size = FontSize + 2
+    End With
+End Sub
+
+Sub headingL()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="headingL"
+
+    ' Apply base formatting from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("headingL"))
+
+    With ActiveWorkbook.Styles("headingL")
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = True
+        .IncludePatterns = False
+        .IncludeProtection = False
+
+        ' Alignment changes
+        .HorizontalAlignment = xlLeft
+
+        ' Font modifications
+        .Font.Bold = True
+        .Font.Color = cHeader
+
+        ' Border customization
+        .Borders.Color = cHeader
+        .Borders(xlDiagonalDown).LineStyle = xlNone
+        .Borders(xlDiagonalUp).LineStyle = xlNone
+        .Borders(xlLeft).LineStyle = xlNone
+        .Borders(xlTop).LineStyle = xlNone
+        .Borders(xlBottom).LineStyle = xlContinuous
+        .Borders(xlRight).LineStyle = xlNone
+        .Borders(xlInsideVertical).LineStyle = xlNone
+        .Borders(xlInsideHorizontal).LineStyle = xlNone
+    End With
+End Sub
+
+
+Sub headingC()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="HeadingC"
+    
+    ' Apply base formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("HeadingC"))
+    
+    With ActiveWorkbook.Styles("HeadingC")
+        ' Set only properties different from base
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = True
+        .IncludePatterns = False
+        .IncludeProtection = False
+
+        ' Modified alignment
+        .HorizontalAlignment = xlCenter
+
+        ' Font changes
+        .Font.Bold = True
+        .Font.Color = cHeader
+
+        ' Border customization
+        .Borders.Color = cHeader
+        .Borders(xlDiagonalDown).LineStyle = xlNone
+        .Borders(xlDiagonalUp).LineStyle = xlNone
+        .Borders(xlLeft).LineStyle = xlNone
+        .Borders(xlTop).LineStyle = xlNone
+        .Borders(xlBottom).LineStyle = xlContinuous
+        .Borders(xlRight).LineStyle = xlNone
+        .Borders(xlInsideVertical).LineStyle = xlNone
+        .Borders(xlInsideHorizontal).LineStyle = xlNone
+    End With
+End Sub
+
+Sub HeadingR()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="HeadingR"
+
+    ' Apply base formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("HeadingR"))
+
+    With ActiveWorkbook.Styles("HeadingR")
+        ' Set includes to define deltas
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = True
+        .IncludePatterns = False
+        .IncludeProtection = False
+
+        ' Modified alignment
+        .HorizontalAlignment = xlRight
+
+        ' Font changes
+        .Font.Bold = True
+        .Font.Color = cHeader
+
+        ' Border customization
+        .Borders.Color = cHeader
+        .Borders(xlDiagonalDown).LineStyle = xlNone
+        .Borders(xlDiagonalUp).LineStyle = xlNone
+        .Borders(xlLeft).LineStyle = xlNone
+        .Borders(xlTop).LineStyle = xlNone
+        .Borders(xlBottom).LineStyle = xlContinuous
+        .Borders(xlRight).LineStyle = xlNone
+        .Borders(xlInsideVertical).LineStyle = xlNone
+        .Borders(xlInsideHorizontal).LineStyle = xlNone
+    End With
+End Sub
+
+Sub blank()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="blank"
+
+    ' Apply base style to inherit Normal format
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("blank"))
+
+    With ActiveWorkbook.Styles("blank")
+        ' Only this property is different from base
+        .IncludeNumber = False
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Override background fill
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cBlankCell
+    End With
+End Sub
+
+Sub deviant()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="deviant"
+
+    ' Apply base style to inherit all defaults from Normal
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("deviant"))
+
+    With ActiveWorkbook.Styles("deviant")
+        ' Override includes
+        .IncludeNumber = False
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = True
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Deviant fill pattern
+        .Interior.Pattern = xlGray8
+        .Interior.PatternColor = RGB(166, 166, 166)
+        .Interior.Color = RGB(242, 242, 242)
+        .Interior.TintAndShade = -4.99893185216834E-02
+        .Interior.PatternTintAndShade = -0.349986266670736
+
+        ' Borders with dashes
+        .Borders(xlLeft).LineStyle = xlDash
+        .Borders(xlTop).LineStyle = xlDash
+        .Borders(xlBottom).LineStyle = xlDash
+        .Borders(xlRight).LineStyle = xlDash
+    End With
+End Sub
+Sub banner1()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="banner1"
+
+    ' Apply base formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("banner1"))
+
+    With ActiveWorkbook.Styles("banner1")
+        ' Include flags to reflect customizations
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = False
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Alignment changes
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlTop
+
+        ' Font changes
+        .Font.Bold = True
+        .Font.Size = FontSize + 2
+        .Font.Color = cWhite
+
+        ' Fill color override
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cBanner1
+    End With
+End Sub
+Sub banner2()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="banner2"
+
+    ' Apply base formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("banner2"))
+
+    With ActiveWorkbook.Styles("banner2")
+        ' Set only the needed includes
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = False
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Alignment changes
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlTop
+
+        ' Font changes
+        .Font.Bold = True
+        .Font.Size = FontSize
+        .Font.Color = cWhite
+
+        ' Fill color
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cBanner2
+    End With
+End Sub
+
+Sub banner3()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="banner3"
+
+    ' Apply base formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("banner3"))
+
+    With ActiveWorkbook.Styles("banner3")
+        ' Set required includes
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = False
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Alignment overrides
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlTop
+
+        ' Font overrides
+        .Font.Bold = True
+        .Font.Size = FontSize
+        .Font.Color = cWhite
+
+        ' Background color override
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cBanner3
+    End With
+End Sub
+
+Sub banner4()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="banner4"
+
+    ' Apply base formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("banner4"))
+
+    With ActiveWorkbook.Styles("banner4")
+        ' Define which components this style modifies
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = False
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Alignment override
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlTop
+
+        ' Font changes
+        .Font.Bold = False
+        .Font.Size = FontSize
+        .Font.Color = cBlack
+
+        ' Fill color
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cBanner4
+    End With
+End Sub
+Sub banner5()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="banner5"
+
+    ' Apply baseline formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("banner5"))
+
+    With ActiveWorkbook.Styles("banner5")
+        ' Define modified components
+        .IncludeNumber = False
+        .IncludeFont = True
+        .IncludeAlignment = True
+        .IncludeBorder = False
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Alignment override
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlTop
+
+        ' Font changes
+        .Font.Bold = False
+        .Font.Size = FontSize
+        .Font.Color = cBlack
+
+        ' Fill color
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cBanner5
+    End With
+End Sub
+
+Sub WIPReview()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="WIP"
+
+    ' Apply baseline formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("WIP"))
+
+    With ActiveWorkbook.Styles("WIP")
+        ' Modify only what is needed
+        .IncludeNumber = False
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = False
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Pattern override
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cWIP
+    End With
+End Sub
+
+Sub Workings()
+    On Error Resume Next
+    ActiveWorkbook.Styles.Add Name:="Workings"
+
+    ' Apply baseline formatting first
+    Call ApplyBaseStyle(ActiveWorkbook.Styles("Workings"))
+
+    With ActiveWorkbook.Styles("Workings")
+        ' Enable only required parts
+        .IncludeNumber = False
+        .IncludeFont = False
+        .IncludeAlignment = False
+        .IncludeBorder = True
+        .IncludePatterns = True
+        .IncludeProtection = False
+
+        ' Custom pattern and border settings
+        .Interior.Pattern = xlSolid
+        .Interior.Color = cWorking
+        .Borders.Color = cBorder
+        .Borders(xlDiagonalDown).LineStyle = xlNone
+        .Borders(xlDiagonalUp).LineStyle = xlNone
+        .Borders(xlInsideVertical).LineStyle = xlNone
+        .Borders(xlInsideHorizontal).LineStyle = xlNone
+        .Borders(xlLeft).LineStyle = xlContinuous
+        .Borders(xlTop).LineStyle = xlContinuous
+        .Borders(xlBottom).LineStyle = xlContinuous
+        .Borders(xlRight).LineStyle = xlContinuous
+    End With
+End Sub

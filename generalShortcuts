@@ -1,13 +1,15 @@
 Sub Auto_Open()
-    Application.OnKey "^+b", "BalanceAutomation"
+    Application.OnKey "^+0", "BalanceAutomation"
     Application.OnKey "^+k", "forecast_Border"
     Application.OnKey "^+j", "pFill"
     Application.OnKey "^+d", "dateActual"
     Application.OnKey "^+i", "circClear"
-    Application.OnKey "^+n", "OpenActivateDialog"
+    Application.OnKey "^+z", "OpenActivateDialog"
     Application.OnKey "^+v", "centAcrSel"
-    Application.OnKey "^+-", "minusMult"
+    Application.OnKey "^+n", "minusMult"
     Application.OnKey "^+e", "if_Error"
+    Application.OnKey "^+'", "topBold"
+    Application.OnKey "^+w", "Zoom"
     
 End Sub
 
@@ -123,15 +125,15 @@ Sub circClear()
     
 End Sub
 
-Sub OpenActivateDialog()
-    Dim sheetCount As Integer
-    sheetCount = ActiveWorkbook.Sheets.Count
-
-    If sheetCount > 16 Then
-        Application.CommandBars("Workbook Tabs").Controls("More Sheets...").Execute
-    Else
-        Application.CommandBars("Workbook Tabs").ShowPopup
-    End If
+Public Sub OpenActivateDialog()
+   With Application.CommandBars("Workbook Tabs")
+      'MODIFY THE STRING "More Sheets..." to submit your local
+      If .Controls(.Controls.Count).Caption = "More Sheets..." Then
+          .Controls(.Controls.Count).Execute
+      Else
+          .ShowPopup
+      End If
+   End With
 End Sub
 
 Sub centAcrSel()
@@ -154,13 +156,44 @@ End Sub
 Sub if_Error()
     Dim cell As Range
     Dim formulaText As String
+    Dim innerFormula As String
     For Each cell In Selection.Cells
         If cell.HasFormula Then
             formulaText = cell.Formula
-            If Not Left(formulaText, 8) = "=IFERROR" Then cell.Formula = "=IFERROR(" & Mid(formulaText, 2) & ","""")"
-            
+            If Left(formulaText, 9) = "=IFERROR(" Then
+                Dim closeParen As Long
+                closeParen = Len(formulaText)
+                Dim firstComma As Long
+                firstComma = InStrRev(formulaText, ",")
+                innerFormula = Mid(formulaText, 10, firstComma - 10)
+                cell.Formula = "=" & innerFormula
+            Else
+                cell.Formula = "=IFERROR(" & Mid(formulaText, 2) & ",""N/A"")"
+            End If
         End If
     Next cell
 End Sub
             
+Sub topBold()
+    With Selection.Borders(xlEdgeTop)
+        .Weight = xlThin
+        .Color = borderColour
+    End With
+    Selection.Font.Bold = True
+End Sub
 
+Sub Zoom()
+    Dim ws As Worksheet
+    Dim firstSheet As Worksheet
+    Application.ScreenUpdating = False
+    Set firstSheet = ThisWorkbook.Worksheets(1)
+    
+    For Each ws In ActiveWorkbook.Sheets
+        ws.Activate
+        ws.[a1].Select
+        ActiveWindow.Zoom = 100
+        ActiveWindow.DisplayGridlines = False
+    Next ws
+    Application.ScreenUpdating = True
+    firstSheet.Activate
+End Sub
